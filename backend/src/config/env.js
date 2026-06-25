@@ -1,16 +1,26 @@
-import dotenv from "dotenv/config";
+import dotenv from "dotenv";
+dotenv.config();
 
-module.exports = {
+const env = {
   port: process.env.PORT || 3000,
   nodeEnv: process.env.NODE_ENV || "development",
-  mongoUri : process.env.MONGO_URI,
+  mongoUri: process.env.MONGO_URI,
   corsOrigin: process.env.CORS_ORIGIN || "*",
   accessToken: {
     secret: process.env.ACCESS_TOKEN_SECRET,
-    expiresIn: process.env.ACCESS_TOKEN_EXPIRY || "15m"
+    expiresIn: process.env.ACCESS_TOKEN_EXPIRY || "15m",
   },
   refreshToken: {
     secret: process.env.REFRESH_TOKEN_SECRET,
-    expiresIn: process.env.REFRESH_TOKEN_EXPIRY || "7d"
-  }
+    expiresIn: process.env.REFRESH_TOKEN_EXPIRY || "7d",
+  },
 };
+
+export const {
+  port,
+  nodeEnv,
+  mongoUri,
+  corsOrigin,
+  accessToken,
+  refreshToken,
+} = env;
