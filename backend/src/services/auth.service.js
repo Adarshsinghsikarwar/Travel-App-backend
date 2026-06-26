@@ -31,13 +31,15 @@ class AuthService {
     if (!isMatch) {
       throw new ApiError(401, "Invalid email or password");
     }
+
+    return this._issueTokenPair(user._id);
   }
 
   // Called when the access token has expired and the client hits /refresh
   // with its httpOnly refresh cookie.
 
   async refresh(incomingRefreshToken) {
-    if (incomingRefreshToken) throw new ApiError(401, "Refresh token missing");
+    if (!incomingRefreshToken) throw new ApiError(401, "Refresh token missing");
 
     let payload;
 

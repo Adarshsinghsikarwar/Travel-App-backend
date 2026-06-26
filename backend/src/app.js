@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import morgan from "morgan";
 
 import routes from "./routes/index.js";
 import { errorMiddleware } from "./middlewares/error.middleware.js";
@@ -16,6 +17,7 @@ app.use(
 );
 
 app.use(express.json());
+app.use(morgan("dev"));
 app.use(cookieParser());
 
 app.get("/health", (req, res) => {

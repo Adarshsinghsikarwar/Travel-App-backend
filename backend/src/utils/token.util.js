@@ -3,14 +3,14 @@ import { accessToken, refreshToken } from "../config/env.js";
 
 // Access token: short-lived, sent in response body, used as Bearer token
 function generateAcessToken(userId) {
-  return jwt.sign({ sub: userId }, accessToken, {
-    expiresIn: accessToken.expiry,
+  return jwt.sign({ sub: userId }, accessToken.secret, {
+    expiresIn: accessToken.expiresIn,
   });
 }
 
 function generateRefreshToken(userId) {
-  return jwt.sign({ sub: userId }, accessToken, {
-    expiresIn: refreshToken.expiry,
+  return jwt.sign({ sub: userId }, refreshToken.secret, {
+    expiresIn: refreshToken.expiresIn,
   });
 }
 

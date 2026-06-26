@@ -5,7 +5,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 // Protects routes: expects "Authorization: Bearer <accessToken>"
 const requireAuth = asyncHandler(async (req, res, next) => {
   const header = req.headers.authorization;
-  if (!header || !header.startWith("Bearer ")) {
+  if (!header || !header.startsWith("Bearer ")) {
     throw new ApiError(401, "Access token missing");
   }
   const token = header.split(" ")[1];
