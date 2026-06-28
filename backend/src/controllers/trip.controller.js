@@ -28,7 +28,6 @@ const updateTrip = asyncHandler(async (req, res) => {
     req.userId,
     req.body
   );
-
   res.status(200).json(new ApiResponse(200, trip, "Trip updated"));
 });
 
