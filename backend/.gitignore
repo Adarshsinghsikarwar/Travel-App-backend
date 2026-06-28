@@ -1,3 +1,4 @@
 node_modules
 .env
-trip-app.documentation
+trip-app-documentation.md
+POSTMAN_TESTING_GUIDE.md
