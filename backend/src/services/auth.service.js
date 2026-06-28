@@ -1,8 +1,8 @@
 import bcrypt from "bcryptjs";
-import userRepository from "../repositories/user.repository.js";
+import userRepo from "../repositories/user.repository.js";
 import ApiError from "../utils/apiError.js";
 import {
-  generateAcessToken,
+  generateAccessToken,
   generateRefreshToken,
   verifyRefreshToken,
 } from "../utils/token.util.js";
@@ -104,7 +104,7 @@ class AuthService {
   }
 
   async _issueTokenPair(userId) {
-    const accessToken = generateAccessToken(userId);
+    const accessToken =  generateAccessToken(userId);
     const refreshToken = generateRefreshToken(userId);
 
     const refreshTokenHash = await bcrypt.hash(refreshToken, 10);

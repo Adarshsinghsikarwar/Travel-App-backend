@@ -31,8 +31,8 @@ class UserRepository {
     return userModel.findByIdAndUpdate(
       userId,
       { $inc: { failedLoginAttempts: 1 } },
-      { new: true }.select("+failedLoginAttempts +lockUntil")
-    );
+      { new: true }
+    ).select("+failedLoginAttempts +lockUntil");
   }
 
   lockAccount(userId, until) {

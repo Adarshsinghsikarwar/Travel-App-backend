@@ -1,5 +1,5 @@
 import analyticsService from "../services/analytics.review.js";
-import asyncHandler from "../utils/asyncHandler.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
 import ApiResponse from "../utils/apiResponse.js";
 
 const getAdminDashboard = asyncHandler(async (req, res) => {

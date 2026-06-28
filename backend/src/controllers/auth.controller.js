@@ -10,7 +10,7 @@ const cookieOptions = {
   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days, matches REFRESH_TOKEN_EXPIRY
 };
 
-function sendTokenReponse(
+function sendTokenResponse(
   res,
   { accessToken, refreshToken, userId },
   message,

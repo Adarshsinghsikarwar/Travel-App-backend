@@ -1,6 +1,5 @@
 import { body } from "express-validator";
 
-
 const registerValidator = [
   body("name")
     .trim()
@@ -30,4 +29,4 @@ const loginValidator = [
   body("password").notEmpty().withMessage("Password is required"),
 ];
 
-module.exports = { registerValidator, loginValidator };
+export { registerValidator, loginValidator };
