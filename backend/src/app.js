@@ -7,6 +7,7 @@ import hpp from "hpp";
 
 import routes from "./routes/index.js";
 import passport from "./config/passport.js";
+import { razorpayWebhook } from "./controllers/webhook.controller.js";
 import { generalLimiter } from "./middlewares/rateLimiter.middleware.js";
 import { errorMiddleware } from "./middlewares/error.middleware.js";
 import { sanitizeInputs } from "./middlewares/sanitize.middleware.js";
@@ -22,6 +23,14 @@ app.use(
     origin: clientUrl,
     credentials: true,
   })
+);
+// IMPORTANT: Razorpay webhook signature must be verified against the RAW request
+// body bytes. This route is registered with express.raw() BEFORE express.json()
+// runs globally, so the handler sees the untouched buffer.
+app.post(
+  "/api/v1/webhooks/razorpay",
+  express.raw({ type: "application/json" }),
+  razorpayWebhook
 );
 
 app.use(express.json({ limit: "1mb" })); // limit body size — basic DoS guard
