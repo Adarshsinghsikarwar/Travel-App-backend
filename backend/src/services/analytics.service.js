@@ -1,9 +1,9 @@
 import mongoose from "mongoose";
 import bookingRepo from "../repositories/booking.repository.js";
 import reviewRepo from "../repositories/review.repository.js";
-import providerRepo from "../repositories/provider.repository.js";
+import providerService from "./provider.service.js";
 
-/// Admin-facing analytics — $facet computes several independent metrics in one round trip.
+// Admin-facing analytics — $facet computes several independent metrics in one round trip.
 class AnalyticsService {
   getAdminDashboard() {
     return bookingRepo.aggregate([

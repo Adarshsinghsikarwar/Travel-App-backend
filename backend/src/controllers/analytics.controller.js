@@ -7,9 +7,14 @@ const getAdminDashboard = asyncHandler(async (req, res) => {
   res.status(200).json(new ApiResponse(200, data));
 });
 
-const getTopRatedGuides = asyncHandler(async (req, res) => {
-  const data = await analyticsService.getTopRatedGuides();
+const getTopRatedProviders = asyncHandler(async (req, res) => {
+  const data = await analyticsService.getTopRatedProviders();
   res.status(200).json(new ApiResponse(200, data));
 });
 
-export { getAdminDashboard, getTopRatedGuides };
+const getPendingVerifications = asyncHandler(async (req, res) => {
+  const data = await analyticsService.getPendingProviderVerifications();
+  res.status(200).json(new ApiResponse(200, data));
+});
+
+export { getAdminDashboard, getTopRatedProviders, getPendingVerifications };

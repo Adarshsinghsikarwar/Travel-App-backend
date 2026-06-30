@@ -1,19 +1,21 @@
-import expenseModel from "../models/expense.model.js";
+import Expense from "../models/expense.model.js";
 
 class ExpenseRepository {
   create(data) {
-    return expenseModel.create(data);
+    return Expense.create(data);
   }
 
   findByTrip(tripId) {
-    return expenseModel.findById({ trip: tripId }).sort({ spentAt: -1 });
+    return Expense.find({ trip: tripId }).sort({ spentAt: -1 });
   }
-  findOneAndUpdate(id, userId) {
-    return expenseModel.findOneAndUpdate({ _id: id, user: userId });
+
+  findOneAndDelete(id, userId) {
+    return Expense.findOneAndDelete({ _id: id, user: userId });
   }
 
   aggregate(pipeline) {
-    return expenseModel.aggregate(pipeline);
+    return Expense.aggregate(pipeline);
   }
 }
+
 export default new ExpenseRepository();
