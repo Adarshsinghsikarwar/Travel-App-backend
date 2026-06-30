@@ -36,4 +36,19 @@ const deleteTrip = asyncHandler(async (req, res) => {
   res.status(200).json(new ApiResponse(200, null, "Trip deleted"));
 });
 
-export { createTrip, getMyTrips, getTripById, updateTrip, deleteTrip };
+// Returns a suggested title/description/destination/budget from rough notes.
+// Does NOT save a trip — client shows this pre-filled in the create form,
+// traveler reviews/edits it, then calls POST /trips normally.
+const generateDraft = asyncHandler(async (req, res) => {
+  const draft = await tripService.generateDraft(req.body.notes);
+  res.status(200).json(new ApiResponse(200, draft, "Draft generated"));
+});
+
+export {
+  createTrip,
+  getMyTrips,
+  getTripById,
+  updateTrip,
+  deleteTrip,
+  generateDraft,
+};
