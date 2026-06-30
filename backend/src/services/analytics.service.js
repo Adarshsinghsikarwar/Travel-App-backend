@@ -1,46 +1,42 @@
+import mongoose from "mongoose";
+import bookingRepo from "../repositories/booking.repository.js";
+import reviewRepo from "../repositories/review.repository.js";
+import providerRepo from "../repositories/provider.repository.js";
 
-
-import reviewRepository from "../repositories/review.repository.js";
-import tripRepository from "../repositories/trip.repository.js";
-
-// // Admin-facing analytics. This is where $facet earns its keep: several
-// independent stats computed in a single DB round trip.
+/// Admin-facing analytics — $facet computes several independent metrics in one round trip.
 class AnalyticsService {
   getAdminDashboard() {
-    return tripRepo.aggregate([
+    return bookingRepo.aggregate([
       {
         $facet: {
-          tripsByStatus: [{ $group: { _id: "$status", count: { $sum: 1 } } }],
-          topDestinations: [
-            { $group: { _id: "$destination", tripCount: { $sum: 1 } } },
-            { $sort: { tripCount: -1 } },
-            { $limit: 5 },
+          bookingsByStatus: [
+            { $group: { _id: "$status", count: { $sum: 1 } } },
           ],
-          monthlyBudgetVolume: [
+          revenueByMonth: [
+            { $match: { "payment.status": "paid" } },
             {
               $group: {
                 _id: {
                   year: { $year: "$createdAt" },
                   month: { $month: "$createdAt" },
                 },
-                totalBudget: { $sum: "$budget" },
+                totalRevenue: { $sum: "$amount" },
+                totalCommission: { $sum: "$commissionAmount" },
               },
             },
             { $sort: { "_id.year": 1, "_id.month": 1 } },
           ],
-          totalTrips: [{ $count: "value" }],
+          totalBookings: [{ $count: "value" }],
         },
       },
     ]);
   }
 
-  // Aggregation with $lookup: join reviews -> guide (user) info, get avg rating per guide
-  getTopRatedGuides() {
+  getTopRatedProviders() {
     return reviewRepo.aggregate([
-      { $match: { guide: { $ne: null } } },
       {
         $group: {
-          _id: "$guide",
+          _id: "$provider",
           avgRating: { $avg: "$rating" },
           reviewCount: { $sum: 1 },
         },
@@ -49,22 +45,26 @@ class AnalyticsService {
       { $limit: 10 },
       {
         $lookup: {
-          from: "users",
+          from: "providers",
           localField: "_id",
           foreignField: "_id",
-          as: "guideInfo",
+          as: "providerInfo",
         },
       },
-      { $unwind: "$guideInfo" },
+      { $unwind: "$providerInfo" },
       {
         $project: {
           avgRating: 1,
           reviewCount: 1,
-          "guideInfo.name": 1,
-          "guideInfo.email": 1,
+          "providerInfo.title": 1,
+          "providerInfo.serviceType": 1,
         },
       },
     ]);
+  }
+
+  getPendingProviderVerifications() {
+    return providerService.getPendingVerifications();
   }
 }
 
