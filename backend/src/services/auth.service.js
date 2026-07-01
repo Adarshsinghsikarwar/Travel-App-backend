@@ -246,6 +246,66 @@ class AuthService {
     return { message: "A new verification code has been sent to your email." };
   }
 
+    // Add this to the AuthService class in backend/src/services/auth.service.js
+
+  async forgotPassword({ email }) {
+    const user = await userRepo.findByEmail(email);
+    if (!user) {
+      throw new ApiError(401, 'Email not registered. Please sign up first.');
+    }
+
+    if (user.authProvider === 'google') {
+      throw new ApiError(401, 'This account is registered via Google OAuth. Please log in using Google.');
+    }
+
+    // Generate a random 6-digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otpExpires = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes validity
+
+    const fullUser = await user.model.findById(user._id).select('+resetPasswordOtp +resetPasswordOtpExpires');
+    fullUser.resetPasswordOtp = otp;
+    fullUser.resetPasswordOtpExpires = otpExpires;
+    await fullUser.save();
+
+    // Send reset code via Brevo
+    notificationService.sendEmail({
+      to: user.email,
+      subject: 'Reset Your TripConnect Password',
+      text: `Hi ${user.name},\n\nWe received a request to reset your password. Please use the following 6-digit verification code to reset it:\n\n${otp}\n\nThis code will expire in 15 minutes. If you did not request this, please ignore this email.\n\nBest regards,\nThe TripConnect Team`
+    }).catch(err => logger.error(`Failed to send password reset email: ${err.message}`));
+
+    return { message: 'A password reset code has been sent to your email.' };
+  }
+
+  async resetPassword({ email, otp, newPassword }) {
+    const user = await userRepo.findByEmail(email);
+    if (!user) {
+      throw new ApiError(404, 'User not found');
+    }
+
+    const fullUser = await user.model.findById(user._id).select('+resetPasswordOtp +resetPasswordOtpExpires');
+
+    if (!fullUser.resetPasswordOtp || fullUser.resetPasswordOtp !== otp) {
+      throw new ApiError(400, 'Invalid verification code');
+    }
+
+    if (fullUser.resetPasswordOtpExpires < new Date()) {
+      throw new ApiError(400, 'Verification code has expired. Please request a new one.');
+    }
+
+    // Update password and clear OTP fields
+    fullUser.password = newPassword; // Automatically hashed by Mongoose schema pre-save hook
+    fullUser.resetPasswordOtp = null;
+    fullUser.resetPasswordOtpExpires = null;
+    await fullUser.save();
+
+    // Clear refresh tokens so they are logged out of all active sessions
+    await userRepo.clearRefreshTokenHash(user._id);
+
+    return { message: 'Password reset successfully. You can now log in with your new password.' };
+  }
+
+
   async _issueTokenPair(userId) {
     const accessToken = generateAccessToken(userId);
     const refreshToken = generateRefreshToken(userId);
