@@ -42,12 +42,20 @@ class NotificationService {
     return notification;
   }
 
-  getForUser(userId, unreadOnly) {
+  async getForUser(userId, unreadOnly) {
     return notificationRepo.findByUser(userId, { unreadOnly });
   }
 
-  markRead(id, userId) {
+  async markRead(id, userId) {
     return notificationRepo.markRead(id, userId);
+  }
+
+  async sendEmail({ to, subject, text }) {
+    if (!brevo.apiKey) {
+      logger.warn('Brevo API key is not configured. Email was not sent.');
+      return;
+    }
+    return sendBrevoEmail({ to, subject, text });
   }
 }
 

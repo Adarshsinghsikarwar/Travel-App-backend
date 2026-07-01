@@ -11,7 +11,7 @@ const RESPOND_WINDOW_HOURS = 24;
 class BookingService {
   async createBookingRequest(travelerId, { provider: providerId, startDate, endDate, trip }) {
     if (new Date(startDate) >= new Date(endDate)) {
-      throw new ApiError(400, 'startDate must be before endDate');
+      throw new ApiError(400, 'Start date must be before end date');
     }
 
     const provider = await providerRepo.findById(providerId);
@@ -54,7 +54,7 @@ class BookingService {
     const booking = await bookingRepo.findById(bookingId);
     if (!booking) throw new ApiError(404, 'Booking not found');
     if (String(booking.provider.user._id || booking.provider.user) !== String(providerUserId)) {
-      throw new ApiError(403, 'Not your booking to respond to');
+      throw new ApiError(403, 'You do not have permission to respond to this booking');
     }
     if (booking.status !== 'requested') throw new ApiError(409, 'This booking is no longer pending');
 
@@ -154,7 +154,7 @@ class BookingService {
     const booking = await bookingRepo.findById(bookingId);
     if (!booking) throw new ApiError(404, 'Booking not found');
     if (String(booking.provider.user._id || booking.provider.user) !== String(providerUserId)) {
-      throw new ApiError(403, 'Not your booking');
+      throw new ApiError(403, 'You do not have permission to manage this booking');
     }
     const updated = await bookingRepo.updateStatusIfCurrent(bookingId, 'confirmed', 'completed');
     if (!updated) throw new ApiError(409, 'Booking must be confirmed before it can be completed');

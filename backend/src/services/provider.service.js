@@ -69,13 +69,13 @@ class ProviderService {
     delete update.reviewCount;
 
     const provider = await providerRepo.findOneAndUpdate(id, userId, update);
-    if (!provider) throw new ApiError(404, 'Provider not found or not yours');
+    if (!provider) throw new ApiError(404, 'Provider profile not found or does not belong to you');
     return provider;
   }
 
   async addPhotos(id, userId, urls) {
     const provider = await providerRepo.findByUserId(userId);
-    if (!provider || String(provider._id) !== String(id)) throw new ApiError(403, 'Not your provider profile');
+    if (!provider || String(provider._id) !== String(id)) throw new ApiError(403, 'You do not have permission to modify this provider profile');
 
     provider.photos.push(...urls);
     await provider.save();

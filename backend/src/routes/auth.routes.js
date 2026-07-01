@@ -1,10 +1,10 @@
 import express from 'express';
 import passport from 'passport';
-import { register, login, googleCallback, refresh, logout } from '../controllers/auth.controller.js';
+import { register, login, googleCallback, refresh, logout, verifyOtp, resendOtp } from '../controllers/auth.controller.js';
 import requireAuth from '../middlewares/auth.middleware.js';
 import { authLimiter } from '../middlewares/rateLimiter.middleware.js';
 import validate from '../middlewares/validate.middleware.js';
-import { registerValidator, loginValidator } from '../validators/auth.validator.js';
+import { registerValidator, loginValidator , verifyOtpValidator, resendOtpValidator } from '../validators/auth.validator.js';
 
 const router = express.Router();
 
@@ -12,6 +12,8 @@ router.post('/register', authLimiter, registerValidator, validate, register);
 router.post('/login', authLimiter, loginValidator, validate, login);
 router.post('/refresh', refresh);
 router.post('/logout', requireAuth, logout);
+router.post('/verify-otp', authLimiter, verifyOtpValidator, validate, verifyOtp);
+router.post('/resend-otp', authLimiter, resendOtpValidator, validate, resendOtp);
 
 // Google OAuth — session: false because we issue our own JWTs, no server session needed
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'], session: false }));

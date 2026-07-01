@@ -9,7 +9,7 @@ class ReviewService {
   async createReview(travelerId, { booking: bookingId, rating, comment }) {
     const booking = await bookingRepo.findById(bookingId);
     if (!booking) throw new ApiError(404, 'Booking not found');
-    if (String(booking.traveler) !== String(travelerId)) throw new ApiError(403, 'Not your booking');
+    if (String(booking.traveler) !== String(travelerId)) throw new ApiError(403, 'You do not have permission to review this booking');
     if (booking.status !== 'completed') {
       throw new ApiError(400, 'Can only review a completed booking');
     }

@@ -28,19 +28,19 @@ class TripService {
   async getTripById(id, userId) {
     const trip = await tripRepo.findById(id);
     if (!trip) throw new ApiError(404, 'Trip not found');
-    if (String(trip.user) !== String(userId)) throw new ApiError(403, 'Not your trip');
+    if (String(trip.user) !== String(userId)) throw new ApiError(403, 'You do not have permission to access this trip');
     return trip;
   }
 
   async updateTrip(id, userId, update) {
     const trip = await tripRepo.findOneAndUpdate(id, userId, update);
-    if (!trip) throw new ApiError(404, 'Trip not found or not yours');
+    if (!trip) throw new ApiError(404, 'Trip not found or you do not have permission to modify it');
     return trip;
   }
 
   async deleteTrip(id, userId) {
     const trip = await tripRepo.findOneAndDelete(id, userId);
-    if (!trip) throw new ApiError(404, 'Trip not found or not yours');
+    if (!trip) throw new ApiError(404, 'Trip not found or you do not have permission to modify it');
     return trip;
   }
 
