@@ -1,5 +1,7 @@
 node_modules
 POSTMAN_TESTING_GUIDE.md
+AUTH_FLOWS_GUIDE.md
 trip-app-documentation.md
+TESTING_GUIDE.md
 .env
 .env.example

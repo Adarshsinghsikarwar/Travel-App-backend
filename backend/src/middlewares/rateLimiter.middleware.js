@@ -7,6 +7,7 @@ const generalLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   message: { success: false, message: 'Too many requests, please try again later' },
+  skip: () => process.env.NODE_ENV === 'test',
 });
 
 // Strict limit on auth endpoints — this is the real brute-force defense,
@@ -17,6 +18,7 @@ const authLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   message: { success: false, message: 'Too many auth attempts, please try again later' },
+  skip: () => process.env.NODE_ENV === 'test',
 });
 
 export { generalLimiter, authLimiter };

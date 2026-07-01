@@ -34,7 +34,7 @@ async function getToken() {
 
 async function runAutocannon(options) {
   // Dynamically import autocannon (it's a CommonJS module)
-  const autocannon = require('autocannon');
+  const { default: autocannon } = await import('autocannon');
 
   return new Promise((resolve, reject) => {
     const instance = autocannon(options, (err, result) => {

@@ -13,7 +13,7 @@ const {
   generateRefreshToken,
   verifyAccessToken,
   verifyRefreshToken,
-} = require('../../src/utils/token.util');
+} = await import('../../src/utils/token.util.js');
 
 describe('Token Utility', () => {
   const userId = '64f1a2b3c4d5e6f7a8b9c0d1';

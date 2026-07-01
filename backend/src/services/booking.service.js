@@ -129,7 +129,7 @@ class BookingService {
     const booking = await bookingRepo.findById(bookingId);
     if (!booking) throw new ApiError(404, 'Booking not found');
 
-    const isTraveler = String(booking.traveler) === String(userId);
+    const isTraveler = String(booking.traveler._id || booking.traveler) === String(userId);
     const isProvider = String(booking.provider.user._id || booking.provider.user) === String(userId);
     if (!isTraveler && !isProvider) throw new ApiError(403, 'Not authorized to cancel this booking');
 
