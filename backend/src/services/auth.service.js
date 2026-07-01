@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs";
 import userRepo from "../repositories/user.repository.js";
+import User from "../models/user.model.js";
 import ApiError from "../utils/apiError.js";
 import {
   generateAccessToken,
@@ -185,7 +186,7 @@ class AuthService {
     if (!user) throw new ApiError(404, "User not found");
 
     // Fetch the hidden OTP fields explicitly
-    const fullUser = await user.model
+    const fullUser = await User
       .findById(user._id)
       .select("+verificationOtp +verificationOtpExpires");
 
@@ -225,7 +226,7 @@ class AuthService {
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     const otpExpires = new Date(Date.now() + 15 * 60 * 1000);
 
-    const fullUser = await user.model
+    const fullUser = await User
       .findById(user._id)
       .select("+verificationOtp +verificationOtpExpires");
     fullUser.verificationOtp = otp;
@@ -262,7 +263,7 @@ class AuthService {
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     const otpExpires = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes validity
 
-    const fullUser = await user.model.findById(user._id).select('+resetPasswordOtp +resetPasswordOtpExpires');
+    const fullUser = await User.findById(user._id).select('+resetPasswordOtp +resetPasswordOtpExpires');
     fullUser.resetPasswordOtp = otp;
     fullUser.resetPasswordOtpExpires = otpExpires;
     await fullUser.save();
@@ -283,7 +284,7 @@ class AuthService {
       throw new ApiError(404, 'User not found');
     }
 
-    const fullUser = await user.model.findById(user._id).select('+resetPasswordOtp +resetPasswordOtpExpires');
+    const fullUser = await User.findById(user._id).select('+resetPasswordOtp +resetPasswordOtpExpires');
 
     if (!fullUser.resetPasswordOtp || fullUser.resetPasswordOtp !== otp) {
       throw new ApiError(400, 'Invalid verification code');
